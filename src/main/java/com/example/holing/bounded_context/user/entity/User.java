@@ -1,7 +1,7 @@
 package com.example.holing.bounded_context.user.entity;
 
 import com.example.holing.base.BaseTimeEntity;
-import com.example.holing.bounded_context.auth.dto.OAuthUserInfoDto;
+import com.example.holing.bounded_context.auth.dto.OAuthUser;
 import com.example.holing.bounded_context.auth.dto.SignInRequestDto;
 import com.example.holing.bounded_context.mission.entity.MissionResult;
 import com.example.holing.bounded_context.schedule.entity.Schedule;
@@ -12,6 +12,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,10 +22,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 @Entity
 @Getter
@@ -72,7 +71,8 @@ public class User extends BaseTimeEntity implements UserDetails {
     private List<MissionResult> missionResults;
 
     @Builder
-    public User(String email, String password, String nickname, String profileImgUrl, Gender gender, Boolean isPeriod, Integer point, Long socialId) {
+    public User(String email, String password, String nickname, String profileImgUrl, Gender gender, Boolean isPeriod,
+                Integer point, Long socialId) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
@@ -85,7 +85,7 @@ public class User extends BaseTimeEntity implements UserDetails {
         this.isSelfTested = false;
     }
 
-    public static User of(OAuthUserInfoDto dto, SignInRequestDto request) {
+    public static User of(OAuthUser dto, SignInRequestDto request) {
         return User.builder()
                 .email(dto.email())
                 .nickname(dto.nickname())

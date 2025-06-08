@@ -2,8 +2,8 @@ package com.example.holing.bounded_context.auth.controller;
 
 import com.example.holing.base.jwt.JwtProvider;
 import com.example.holing.bounded_context.auth.api.AuthApi;
-import com.example.holing.bounded_context.auth.dto.OAuthTokenInfoDto;
-import com.example.holing.bounded_context.auth.dto.OAuthUserInfoDto;
+import com.example.holing.bounded_context.auth.dto.OAuthToken;
+import com.example.holing.bounded_context.auth.dto.OAuthUser;
 import com.example.holing.bounded_context.auth.dto.SignInRequestDto;
 import com.example.holing.bounded_context.auth.dto.SignInResponseDto;
 import com.example.holing.bounded_context.auth.service.OAuthService;
@@ -12,6 +12,7 @@ import com.example.holing.bounded_context.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,10 +58,17 @@ public class AuthController implements AuthApi {
 //        return ResponseEntity.ok().body(token);
 //    }
 
+    @GetMapping("/sign-in")
+    public ResponseEntity<OAuthUser> callback(@RequestParam("code") String code) {
+        OAuthToken token = oAuthService.getToken(code);
+        OAuthUser userInfo = oAuthService.getUser(token.accessToken());
+
+        return ResponseEntity.ok().body(userInfo);
+    }
+
     /**
-     * 로그인: 인증 서버 ccess token 으로 로그인을 진행합니다.<br>
-     * 데이터베이스에 유저가 없는 경우 새 레코드를 생성합니다.<br>
-     * 데이터베이스에 유저가 있는 경우 리소스 공급자의 데이터로 레코드를 업데이트합니다.<br>
+     * 로그인: 인증 서버 ccess token 으로 로그인을 진행합니다.<br> 데이터베이스에 유저가 없는 경우 새 레코드를 생성합니다.<br> 데이터베이스에 유저가 있는 경우 리소스 공급자의 데이터로
+     * 레코드를 업데이트합니다.<br>
      *
      * @param request 회원가입 객체
      * @param code    인가 코드
@@ -68,9 +76,10 @@ public class AuthController implements AuthApi {
      * @throws HttpClientErrorException 사용자 정보 받기 api 요청 실패 시 발생합니다.
      */
     @Override
-    public ResponseEntity<SignInResponseDto> signIn(@RequestBody SignInRequestDto request, @RequestParam("code") String code) {
-        OAuthTokenInfoDto token = oAuthService.getToken(code);
-        OAuthUserInfoDto userInfo = oAuthService.getUserInfo(token.accessToken());
+    public ResponseEntity<SignInResponseDto> signIn(@RequestBody SignInRequestDto request,
+                                                    @RequestParam("code") String code) {
+        OAuthToken token = oAuthService.getToken(code);
+        OAuthUser userInfo = oAuthService.getUser(token.accessToken());
 
         User user = userService.saveOrUpdate(User.of(userInfo, request));
 
@@ -81,8 +90,7 @@ public class AuthController implements AuthApi {
     }
 
     /**
-     * 회원 탈퇴: 회원 아이디로 회원탈퇴를 진행합니다<br>
-     * 인증 서버의 아이디로 인증 서버와의 연결을 끊고 데이터베이스에 레코드를 지웁니다.
+     * 회원 탈퇴: 회원 아이디로 회원탈퇴를 진행합니다<br> 인증 서버의 아이디로 인증 서버와의 연결을 끊고 데이터베이스에 레코드를 지웁니다.
      *
      * @return
      * @throws HttpClientErrorException 연결 끊기 api 요청 실패 시 발생합니다.
