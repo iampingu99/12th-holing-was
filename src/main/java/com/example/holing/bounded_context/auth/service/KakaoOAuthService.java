@@ -15,12 +15,14 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 @RequiredArgsConstructor
 public class KakaoOAuthService implements OAuthService {
-
+    private final WebClient webClient;
     private final KakaoProperties kakaoProperties;
 
     /**
@@ -30,17 +32,16 @@ public class KakaoOAuthService implements OAuthService {
      */
     @Override
     public String getAuthorizeUri() {
-        return UriComponentsBuilder.fromHttpUrl(kakaoProperties.getAuthorizationUri())
+        return UriComponentsBuilder.fromHttpUrl(kakaoProperties.authorizationUri())
                 .queryParam("response_type", "code")
-                .queryParam("client_id", kakaoProperties.getClientId())
-                .queryParam("redirect_uri", kakaoProperties.getRedirectUri())
-                .queryParam("scope", kakaoProperties.getScope())
+                .queryParam("client_id", kakaoProperties.clientId())
+                .queryParam("redirect_uri", kakaoProperties.redirectUri())
+                .queryParam("scope", kakaoProperties.scope())
                 .toUriString();
     }
 
     /**
-     * 토큰 받기 : 인가 코드로 토큰 발급을 요청합니다.<br>
-     * https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#request-token
+     * 토큰 받기 : 인가 코드로 토큰 발급을 요청합니다.<br> https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#request-token
      *
      * @param code 인가 코드
      * @return TokenInfoDto 토큰 정보
@@ -48,27 +49,19 @@ public class KakaoOAuthService implements OAuthService {
      */
     @Override
     public OAuthTokenInfoDto getToken(String code) {
-        RestTemplate restTemplate = new RestTemplate();
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("grant_type", "authorization_code");
+        formData.add("client_id", kakaoProperties.clientId());
+        formData.add("redirect_uri", kakaoProperties.redirectUri());
+        formData.add("code", code);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
-        params.add("client_id", kakaoProperties.getClientId());
-        params.add("client_secret", kakaoProperties.getClientSecret());
-        params.add("redirect_uri", kakaoProperties.getRedirectUri());
-        params.add("code", code);
-
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
-        ResponseEntity<String> response = restTemplate.exchange(kakaoProperties.getTokenUri(), HttpMethod.POST, entity, String.class);
-
-        JSONObject tokenInfoJson = new JSONObject(response.getBody());
-        String accessToken = tokenInfoJson.getString("access_token");
-        String refreshToken = tokenInfoJson.getString("refresh_token");
-        String scope = tokenInfoJson.getString("scope");
-
-        return OAuthTokenInfoDto.of(accessToken, refreshToken, scope);
+        return webClient.post()
+                .uri(kakaoProperties.endpoints().oAuthToken())
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .body(BodyInserters.fromFormData(formData))
+                .retrieve()
+                .bodyToMono(OAuthTokenInfoDto.class)
+                .block();
     }
 
     /**
@@ -87,13 +80,15 @@ public class KakaoOAuthService implements OAuthService {
         headers.setBearerAuth(accessToken);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<String> response = restTemplate.exchange(kakaoProperties.getUserInfoUri(), HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(kakaoProperties.userInfoUri(), HttpMethod.GET,
+                entity, String.class);
 
         JSONObject userInfoJson = new JSONObject(response.getBody());
         Long id = userInfoJson.getLong("id");
         String email = userInfoJson.getJSONObject("kakao_account").getString("email");
         String nickname = userInfoJson.getJSONObject("kakao_account").getJSONObject("profile").getString("nickname");
-        String profileImageUrl = userInfoJson.getJSONObject("kakao_account").getJSONObject("profile").getString("profile_image_url");
+        String profileImageUrl = userInfoJson.getJSONObject("kakao_account").getJSONObject("profile")
+                .getString("profile_image_url");
 
         return OAuthUserInfoDto.of(id, nickname, email, profileImageUrl);
     }
@@ -111,13 +106,13 @@ public class KakaoOAuthService implements OAuthService {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.set("Authorization", "KakaoAK " + kakaoProperties.getAdminKey());
+        headers.set("Authorization", "KakaoAK " + kakaoProperties.adminKey());
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("target_id_type", "user_id");
         params.add("target_id", socialId.toString());
 
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
-        restTemplate.postForEntity(kakaoProperties.getUnlinkUri(), entity, String.class);
+        restTemplate.postForEntity(kakaoProperties.unlinkUri(), entity, String.class);
     }
 }
