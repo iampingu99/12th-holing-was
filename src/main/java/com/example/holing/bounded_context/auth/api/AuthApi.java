@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,7 +27,7 @@ public interface AuthApi {
 //    @Operation(summary = "소셜 인증 토큰 반환", description = "사용자가 소셜 인증 토큰을 받기 위한 API 입니다.")
 //    ResponseEntity<OAuthTokenInfoDto> token(@RequestParam("code") String code);
 
-    @PostMapping("/sign-in")
+
     @Operation(summary = "로그인 및 회원가입", description = "사용자가 로그인 및 회원가입을 위한 API 입니다.<br>회원가입의 경우 자가테스트의 사용자 정보가 필요합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "사용자 로그인 성공"),
@@ -42,7 +42,8 @@ public interface AuthApi {
                                     """)
                     }))
     })
-    ResponseEntity<SignInResponseDto> signIn(@RequestBody SignInRequestDto request, @RequestParam("code") String code);
+    ResponseEntity<SignInResponseDto> signIn(@PathVariable String provider, @RequestParam String code,
+                                             @RequestBody SignInRequestDto request);
 
     @DeleteMapping("/withdrawal")
     @Operation(summary = "회원 탈퇴[임시]", description = "사용자가 서비스와 연결을 끊고 회원을 탈퇴하기 위한 API 입니다.")

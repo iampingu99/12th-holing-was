@@ -16,4 +16,14 @@ public record OAuthUser(
                 "KAKAO"
         );
     }
+
+    public static OAuthUser from(GoogleUser googleUser) {
+        return new OAuthUser(
+                googleUser.sub(),
+                googleUser.email(),
+                googleUser.nickname(),
+                googleUser.picture(),
+                "GOOGLE"
+        );
+    }
 }

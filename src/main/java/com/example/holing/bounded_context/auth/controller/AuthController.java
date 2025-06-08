@@ -2,18 +2,18 @@ package com.example.holing.bounded_context.auth.controller;
 
 import com.example.holing.base.jwt.JwtProvider;
 import com.example.holing.bounded_context.auth.api.AuthApi;
-import com.example.holing.bounded_context.auth.dto.OAuthToken;
 import com.example.holing.bounded_context.auth.dto.OAuthUser;
 import com.example.holing.bounded_context.auth.dto.SignInRequestDto;
 import com.example.holing.bounded_context.auth.dto.SignInResponseDto;
 import com.example.holing.bounded_context.auth.service.AuthService;
-import com.example.holing.bounded_context.auth.service.OAuthService;
 import com.example.holing.bounded_context.user.entity.User;
 import com.example.holing.bounded_context.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,7 +25,6 @@ import org.springframework.web.client.HttpClientErrorException;
 @RequestMapping("/auth")
 public class AuthController implements AuthApi {
 
-    private final OAuthService oAuthService;
     private final UserService userService;
     private final JwtProvider jwtProvider;
     private final AuthService authService;
@@ -60,9 +59,9 @@ public class AuthController implements AuthApi {
 //        return ResponseEntity.ok().body(token);
 //    }
 
-    @GetMapping("/sign-in")
-    public ResponseEntity<SignInResponseDto> callback(@RequestParam("code") String code) {
-        OAuthUser oAuthUser = authService.fetch(code);
+    @GetMapping("/sign-in/{provider}")
+    public ResponseEntity<SignInResponseDto> callback(@PathVariable String provider, @RequestParam String code) {
+        OAuthUser oAuthUser = authService.fetch(provider, code);
         User user = userService.saveOrUpdate(User.from(oAuthUser));
         String accessToken = jwtProvider.generatorAccessToken(user.getEmail(), user.getId());
         SignInResponseDto response = SignInResponseDto.of(accessToken, user);
@@ -79,12 +78,11 @@ public class AuthController implements AuthApi {
      * @throws HttpClientErrorException 사용자 정보 받기 api 요청 실패 시 발생합니다.
      */
     @Override
-    public ResponseEntity<SignInResponseDto> signIn(@RequestBody SignInRequestDto request,
-                                                    @RequestParam("code") String code) {
-        OAuthToken token = oAuthService.getToken(code);
-        OAuthUser userInfo = oAuthService.getUser(token.accessToken());
-
-        User user = userService.saveOrUpdate(User.of(userInfo, request));
+    @PostMapping("/sign-in/{provider}")
+    public ResponseEntity<SignInResponseDto> signIn(@PathVariable String provider, @RequestParam String code,
+                                                    @RequestBody SignInRequestDto request) {
+        OAuthUser oAuthUser = authService.fetch(provider, code);
+        User user = userService.saveOrUpdate(User.of(oAuthUser, request));
 
         String accessToken = jwtProvider.generatorAccessToken(user.getEmail(), user.getId());
 
@@ -105,7 +103,7 @@ public class AuthController implements AuthApi {
         String userId = jwtProvider.getUserId(accessToken);
 
         User user = userService.read(Long.parseLong(userId));
-        oAuthService.unlink(Long.parseLong(user.getSocialId()));
+        authService.unlink(user.getSocialId());
         userService.delete(user);
 
         return ResponseEntity.ok().body("회원 탈퇴에 성공했습니다.");

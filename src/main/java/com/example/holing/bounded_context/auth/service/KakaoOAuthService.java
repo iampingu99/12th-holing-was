@@ -19,7 +19,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
-@Service
+@Service("KAKAO")
 @RequiredArgsConstructor
 public class KakaoOAuthService implements OAuthService {
     private final WebClient webClient;
@@ -30,7 +30,6 @@ public class KakaoOAuthService implements OAuthService {
      *
      * @return uri
      */
-    @Override
     public String getAuthorizeUri() {
         return UriComponentsBuilder.fromHttpUrl(kakaoProperties.authorizationUri())
                 .queryParam("response_type", "code")
@@ -101,7 +100,6 @@ public class KakaoOAuthService implements OAuthService {
      * @param socialId
      * @throws HttpClientErrorException api 요청 실패 시 발생합니다.
      */
-    @Override
     public void unlink(Long socialId) {
         RestTemplate restTemplate = new RestTemplate();
 
