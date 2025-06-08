@@ -6,7 +6,12 @@ public record OAuthUserInfoDto(
         String email,
         String profileImageUrl
 ) {
-    public static OAuthUserInfoDto of(Long id, String nickname, String email, String profileImageUrl) {
-        return new OAuthUserInfoDto(id, nickname, email, profileImageUrl);
+    public static OAuthUserInfoDto from(KakaoUser kakaoUser) {
+        return new OAuthUserInfoDto(
+                kakaoUser.id(),
+                kakaoUser.KakaoAccount().email(),
+                kakaoUser.KakaoAccount().profile().nickname(),
+                kakaoUser.KakaoAccount().profile().profileImageUrl()
+        );
     }
 }

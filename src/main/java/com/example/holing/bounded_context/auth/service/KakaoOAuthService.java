@@ -1,15 +1,13 @@
 package com.example.holing.bounded_context.auth.service;
 
 import com.example.holing.bounded_context.auth.config.KakaoProperties;
+import com.example.holing.bounded_context.auth.dto.KakaoUser;
 import com.example.holing.bounded_context.auth.dto.OAuthTokenInfoDto;
 import com.example.holing.bounded_context.auth.dto.OAuthUserInfoDto;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -74,23 +72,13 @@ public class KakaoOAuthService implements OAuthService {
      */
     @Override
     public OAuthUserInfoDto getUserInfo(String accessToken) {
-        RestTemplate restTemplate = new RestTemplate();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(accessToken);
-
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<String> response = restTemplate.exchange(kakaoProperties.userInfoUri(), HttpMethod.GET,
-                entity, String.class);
-
-        JSONObject userInfoJson = new JSONObject(response.getBody());
-        Long id = userInfoJson.getLong("id");
-        String email = userInfoJson.getJSONObject("kakao_account").getString("email");
-        String nickname = userInfoJson.getJSONObject("kakao_account").getJSONObject("profile").getString("nickname");
-        String profileImageUrl = userInfoJson.getJSONObject("kakao_account").getJSONObject("profile")
-                .getString("profile_image_url");
-
-        return OAuthUserInfoDto.of(id, nickname, email, profileImageUrl);
+        return webClient.get()
+                .uri(kakaoProperties.endpoints().userMe())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .retrieve()
+                .bodyToMono(KakaoUser.class)
+                .map(OAuthUserInfoDto::from)
+                .block();
     }
 
     /**
