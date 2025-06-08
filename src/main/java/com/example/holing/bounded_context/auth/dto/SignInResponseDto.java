@@ -4,7 +4,7 @@ import com.example.holing.bounded_context.user.entity.User;
 
 public record SignInResponseDto(
         String accessToken,
-        Long socialId,
+        String socialId,
         Boolean isSelfTested
 ) {
     public static SignInResponseDto of(String accessToken, User user) {

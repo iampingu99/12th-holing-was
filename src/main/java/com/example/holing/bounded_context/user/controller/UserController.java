@@ -15,13 +15,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -87,11 +86,12 @@ public class UserController implements UserApi {
 //        return ResponseEntity.ok().body(response);
 //    }
 
-    public ResponseEntity<String> connectMate(HttpServletRequest request, @Valid @NotNull @Pattern(regexp = "^\\d{10}$") @PathVariable String socialId) {
+    public ResponseEntity<String> connectMate(HttpServletRequest request,
+                                              @Valid @NotNull @Pattern(regexp = "^\\d{10}$") @PathVariable String socialId) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
-        userService.connectMate(Long.parseLong(userId), Long.parseLong(socialId));
+        userService.connectMate(userId, socialId);
 
         return ResponseEntity.ok().body("짝꿍 연결에 성공했습니다.");
     }
@@ -105,7 +105,8 @@ public class UserController implements UserApi {
         return ResponseEntity.ok().body("짝꿍 해제에 성공했습니다.");
     }
 
-    public ResponseEntity<UserInfoResponseDto> exchange(HttpServletRequest request, @RequestBody UserExchangeRequestDto userExchangeRequestDto) {
+    public ResponseEntity<UserInfoResponseDto> exchange(HttpServletRequest request,
+                                                        @RequestBody UserExchangeRequestDto userExchangeRequestDto) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 

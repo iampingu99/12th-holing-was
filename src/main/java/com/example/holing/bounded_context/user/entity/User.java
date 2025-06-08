@@ -55,7 +55,10 @@ public class User extends BaseTimeEntity implements UserDetails {
     private int point;
 
     @Column(nullable = false)
-    private Long socialId;
+    private String socialId;
+
+    @Column(nullable = false)
+    private String provider;
 
     @Column(nullable = false)
     private Boolean isChanged;
@@ -71,7 +74,7 @@ public class User extends BaseTimeEntity implements UserDetails {
 
     @Builder
     public User(String email, String password, String nickname, String profileImgUrl, Gender gender, Boolean isPeriod,
-                Integer point, Long socialId) {
+                Integer point, String socialId, String provider) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
@@ -80,6 +83,7 @@ public class User extends BaseTimeEntity implements UserDetails {
         this.isPeriod = (gender == Gender.FEMALE) ? isPeriod : false;
         this.point = 0;
         this.socialId = socialId;
+        this.provider = provider;
         this.isChanged = false;
         this.isSelfTested = false;
     }
@@ -90,6 +94,7 @@ public class User extends BaseTimeEntity implements UserDetails {
                 .nickname(oAuthUser.nickname())
                 .profileImgUrl(oAuthUser.profileImageUrl())
                 .socialId(oAuthUser.id())
+                .provider(oAuthUser.provider())
                 .build();
     }
 

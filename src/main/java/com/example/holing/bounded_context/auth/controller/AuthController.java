@@ -105,7 +105,7 @@ public class AuthController implements AuthApi {
         String userId = jwtProvider.getUserId(accessToken);
 
         User user = userService.read(Long.parseLong(userId));
-        oAuthService.unlink(user.getSocialId());
+        oAuthService.unlink(Long.parseLong(user.getSocialId()));
         userService.delete(user);
 
         return ResponseEntity.ok().body("회원 탈퇴에 성공했습니다.");

@@ -24,7 +24,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public User readBySocialId(Long socialId) {
+    public User readBySocialId(String socialId) {
         return userRepository.findBySocialId(socialId)
                 .orElseThrow(() -> new GlobalException(UserExceptionCode.TARGET_NOT_FOUND));
     }
@@ -39,8 +39,8 @@ public class UserService {
     }
 
     @Transactional
-    public void connectMate(Long userId, Long socialId) {
-        User user = read(userId);
+    public void connectMate(String userId, String socialId) {
+        User user = read(Long.parseLong(userId));
         if (user.getMate() != null)
             throw new GlobalException(UserExceptionCode.USER_MATE_EXISTS);
 

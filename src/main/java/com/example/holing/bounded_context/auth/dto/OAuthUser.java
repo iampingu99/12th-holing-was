@@ -1,17 +1,19 @@
 package com.example.holing.bounded_context.auth.dto;
 
 public record OAuthUser(
-        Long id,
+        String id,
         String email,
         String nickname,
-        String profileImageUrl
+        String profileImageUrl,
+        String provider
 ) {
     public static OAuthUser from(KakaoUser kakaoUser) {
         return new OAuthUser(
-                kakaoUser.id(),
+                kakaoUser.id().toString(),
                 kakaoUser.KakaoAccount().email(),
                 kakaoUser.KakaoAccount().profile().nickname(),
-                kakaoUser.KakaoAccount().profile().profileImageUrl()
+                kakaoUser.KakaoAccount().profile().profileImageUrl(),
+                "KAKAO"
         );
     }
 }
