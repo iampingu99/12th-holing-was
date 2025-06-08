@@ -6,6 +6,7 @@ import com.example.holing.bounded_context.auth.dto.OAuthToken;
 import com.example.holing.bounded_context.auth.dto.OAuthUser;
 import com.example.holing.bounded_context.auth.dto.SignInRequestDto;
 import com.example.holing.bounded_context.auth.dto.SignInResponseDto;
+import com.example.holing.bounded_context.auth.service.AuthService;
 import com.example.holing.bounded_context.auth.service.OAuthService;
 import com.example.holing.bounded_context.user.entity.User;
 import com.example.holing.bounded_context.user.service.UserService;
@@ -27,6 +28,7 @@ public class AuthController implements AuthApi {
     private final OAuthService oAuthService;
     private final UserService userService;
     private final JwtProvider jwtProvider;
+    private final AuthService authService;
 
 //    /**
 //     * 인증 코드 받기 요청: 소셜 로그인으로 인가 코드를 받을 수 있는 링크로 리다이렉션 합니다.<br>
@@ -59,11 +61,12 @@ public class AuthController implements AuthApi {
 //    }
 
     @GetMapping("/sign-in")
-    public ResponseEntity<OAuthUser> callback(@RequestParam("code") String code) {
-        OAuthToken token = oAuthService.getToken(code);
-        OAuthUser userInfo = oAuthService.getUser(token.accessToken());
-
-        return ResponseEntity.ok().body(userInfo);
+    public ResponseEntity<SignInResponseDto> callback(@RequestParam("code") String code) {
+        OAuthUser oAuthUser = authService.fetch(code);
+        User user = userService.saveOrUpdate(User.from(oAuthUser));
+        String accessToken = jwtProvider.generatorAccessToken(user.getEmail(), user.getId());
+        SignInResponseDto response = SignInResponseDto.of(accessToken, user);
+        return ResponseEntity.ok().body(response);
     }
 
     /**

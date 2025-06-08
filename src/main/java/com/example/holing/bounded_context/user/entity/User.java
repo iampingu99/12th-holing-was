@@ -43,7 +43,6 @@ public class User extends BaseTimeEntity implements UserDetails {
     @Column(nullable = false)
     private String nickname;
 
-    @Column(nullable = false)
     private String profileImgUrl;
 
     @Column(nullable = false)
@@ -77,12 +76,21 @@ public class User extends BaseTimeEntity implements UserDetails {
         this.password = password;
         this.nickname = nickname;
         this.profileImgUrl = profileImgUrl;
-        this.gender = gender;
+        this.gender = gender == null ? Gender.FEMALE : gender;
         this.isPeriod = (gender == Gender.FEMALE) ? isPeriod : false;
         this.point = 0;
         this.socialId = socialId;
         this.isChanged = false;
         this.isSelfTested = false;
+    }
+
+    public static User from(OAuthUser oAuthUser) {
+        return User.builder()
+                .email(oAuthUser.email())
+                .nickname(oAuthUser.nickname())
+                .profileImgUrl(oAuthUser.profileImageUrl())
+                .socialId(oAuthUser.id())
+                .build();
     }
 
     public static User of(OAuthUser dto, SignInRequestDto request) {
