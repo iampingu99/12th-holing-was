@@ -1,6 +1,7 @@
 package com.example.holing.bounded_context.user.service;
 
 import com.example.holing.base.exception.GlobalException;
+import com.example.holing.base.id.IdProvider;
 import com.example.holing.bounded_context.user.dto.UserExchangeRequestDto;
 import com.example.holing.bounded_context.user.entity.User;
 import com.example.holing.bounded_context.user.exception.UserExceptionCode;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final IdProvider idProvider;
 
     @Transactional(readOnly = true)
     public User read(Long userId) {
@@ -29,8 +31,15 @@ public class UserService {
                 .orElseThrow(() -> new GlobalException(UserExceptionCode.TARGET_NOT_FOUND));
     }
 
+    @Transactional(readOnly = true)
+    public User readByPublicId(Long publicId) {
+        return userRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new GlobalException(UserExceptionCode.TARGET_NOT_FOUND));
+    }
+
     @Transactional
     public User saveOrUpdate(User user) {
+        user.setPublicId(idProvider.nextId());
         return userRepository.findBySocialIdAndProvider(user.getSocialId(), user.getProvider())
                 .map(entity -> entity.update(
                         user.getNickname(),
@@ -48,6 +57,18 @@ public class UserService {
         if (mate.getMate() != null)
             throw new GlobalException(UserExceptionCode.TARGET_MATE_EXISTS);
         user.connectMate(readBySocialId(socialId));
+    }
+
+    @Transactional
+    public void connectMate(Long userId, Long publicId) {
+        User user = read(userId);
+        if (user.getMate() != null)
+            throw new GlobalException(UserExceptionCode.USER_MATE_EXISTS);
+
+        User mate = readByPublicId(publicId);
+        if (mate.getMate() != null)
+            throw new GlobalException(UserExceptionCode.TARGET_MATE_EXISTS);
+        user.connectMate(mate);
     }
 
     @Transactional

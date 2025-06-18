@@ -5,6 +5,7 @@ import com.example.holing.bounded_context.auth.dto.OAuthUser;
 import com.example.holing.bounded_context.auth.dto.SignInRequestDto;
 import com.example.holing.bounded_context.mission.entity.MissionResult;
 import com.example.holing.bounded_context.schedule.entity.Schedule;
+import com.github.f4b6a3.tsid.TsidCreator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -67,6 +69,10 @@ public class User extends BaseTimeEntity implements UserDetails {
     @OneToOne
     private User mate;
 
+    @Setter
+    @Column(nullable = false)
+    private long publicId;
+
     @OneToMany(mappedBy = "user")
     private List<MissionResult> missionResults;
 
@@ -82,6 +88,7 @@ public class User extends BaseTimeEntity implements UserDetails {
         this.point = 0;
         this.socialId = socialId;
         this.provider = provider;
+        this.publicId = TsidCreator.getTsid().toLong();
         this.isChanged = false;
         this.isSelfTested = false;
     }
