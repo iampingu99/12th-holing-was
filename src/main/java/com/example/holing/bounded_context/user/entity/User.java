@@ -34,7 +34,7 @@ public class User extends BaseTimeEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     private String email;
 
     private String password;
@@ -72,7 +72,7 @@ public class User extends BaseTimeEntity implements UserDetails {
 
     @Builder
     public User(String email, String password, String nickname, String profileImgUrl, Gender gender, Boolean isPeriod,
-                Integer point, String socialId, String provider) {
+                String socialId, String provider) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
@@ -102,6 +102,7 @@ public class User extends BaseTimeEntity implements UserDetails {
                 .nickname(dto.nickname())
                 .profileImgUrl(dto.profileImageUrl())
                 .socialId(dto.id())
+                .provider(dto.provider())
                 .gender(request.gender())
                 .isPeriod(request.isPeriod())
                 .build();
