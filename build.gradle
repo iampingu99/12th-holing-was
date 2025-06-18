@@ -51,6 +51,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    
+    // https://mvnrepository.com/artifact/com.github.f4b6a3/tsid-creator
+    implementation group: 'com.github.f4b6a3', name: 'tsid-creator', version: '5.2.6'
 }
 
 tasks.named('test') {
