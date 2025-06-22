@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Optional;
 
 @Schema(description = "User 정보 응답 DTO")
-public record UserInfoResponseDto(
+public record UserResponse(
         @Schema(description = "유저 ID", example = "1")
         Long id,
         @Schema(description = "유저 이메일", example = "user@example.com")
@@ -21,15 +21,15 @@ public record UserInfoResponseDto(
         Boolean isPeriod,
         @Schema(description = "유저 포인트", example = "100")
         int point,
-        @Schema(description = "소셜 ID", example = "1234567890")
-        String socialId,
+        @Schema(description = "공개 ID", example = "1234567890")
+        Long publicId,
         @Schema(description = "짝꿍 닉네임", example = "mateNickname")
         String mateNickname,
         @Schema(description = "자가 진단 테스트 유무", example = "true")
         boolean isSelfTested
 ) {
-    public static UserInfoResponseDto fromEntity(User user) {
-        return new UserInfoResponseDto(
+    public static UserResponse fromEntity(User user) {
+        return new UserResponse(
                 user.getId(),
                 user.getEmail(),
                 user.getNickname(),
@@ -37,7 +37,7 @@ public record UserInfoResponseDto(
                 user.getGender(),
                 user.getIsPeriod(),
                 user.getPoint(),
-                user.getSocialId(),
+                user.getPublicId(),
                 Optional.ofNullable(user.getMate())
                         .map(User::getNickname)
                         .orElse(null),

@@ -1,8 +1,8 @@
 package com.example.holing.bounded_context.user.api;
 
 import com.example.holing.bounded_context.user.dto.UserExchangeRequestDto;
-import com.example.holing.bounded_context.user.dto.UserInfoResponseDto;
 import com.example.holing.bounded_context.user.dto.UserRecentReportResponseDto;
+import com.example.holing.bounded_context.user.dto.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -62,7 +62,7 @@ public interface UserApi {
                                     """),
                     }))
     })
-    ResponseEntity<UserInfoResponseDto> read(HttpServletRequest request);
+    ResponseEntity<UserResponse> read(HttpServletRequest request);
 
 //    /**
 //     * 사용자 정보 조회 : 사용자가 다른 사용자의 정보를 조회하기 위한 메서드입니다.
@@ -122,7 +122,8 @@ public interface UserApi {
                                     """),
                     }))
     })
-    ResponseEntity<String> connectMate(HttpServletRequest request, @Valid @NotNull @Pattern(regexp = "^\\d{10}$") @PathVariable String socialId);
+    ResponseEntity<String> connectMate(HttpServletRequest request,
+                                       @Valid @NotNull @Pattern(regexp = "^\\d{10}$") @PathVariable String socialId);
 
     @PatchMapping("/disconnect")
     @Operation(summary = "짝꿍 해제", description = "사용자가 기존 짝궁과 연결을 해제하기 위한 API 입니다")
@@ -163,10 +164,11 @@ public interface UserApi {
                                     """)
                     })),
     })
-    ResponseEntity<UserInfoResponseDto> exchange(HttpServletRequest request, @RequestBody UserExchangeRequestDto userExchangeRequestDto);
+    ResponseEntity<UserResponse> exchange(HttpServletRequest request,
+                                          @RequestBody UserExchangeRequestDto userExchangeRequestDto);
 
     @PatchMapping("/self-test")
     @Operation(summary = "유저 자가 테스트 완료 처리", description = "로그인 한 사용자의 자가 진단 테스트 유무를 완료 처리하는 API 입니다.")
     @ApiResponse(responseCode = "200", description = "자가 진단 테스트 완료")
-    ResponseEntity<UserInfoResponseDto> completeSelfTest(HttpServletRequest request);
+    ResponseEntity<UserResponse> completeSelfTest(HttpServletRequest request);
 }

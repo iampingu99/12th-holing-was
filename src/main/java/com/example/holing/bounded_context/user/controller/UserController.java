@@ -6,8 +6,8 @@ import com.example.holing.bounded_context.report.entity.UserReport;
 import com.example.holing.bounded_context.report.service.UserReportService;
 import com.example.holing.bounded_context.user.api.UserApi;
 import com.example.holing.bounded_context.user.dto.UserExchangeRequestDto;
-import com.example.holing.bounded_context.user.dto.UserInfoResponseDto;
 import com.example.holing.bounded_context.user.dto.UserRecentReportResponseDto;
+import com.example.holing.bounded_context.user.dto.UserResponse;
 import com.example.holing.bounded_context.user.entity.User;
 import com.example.holing.bounded_context.user.exception.UserExceptionCode;
 import com.example.holing.bounded_context.user.service.UserService;
@@ -61,12 +61,12 @@ public class UserController implements UserApi {
         return ResponseEntity.ok().body(response);
     }
 
-    public ResponseEntity<UserInfoResponseDto> read(HttpServletRequest request) {
+    public ResponseEntity<UserResponse> read(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
         User user = userService.read(Long.parseLong(userId));
-        UserInfoResponseDto response = UserInfoResponseDto.fromEntity(user);
+        UserResponse response = UserResponse.fromEntity(user);
 
         return ResponseEntity.ok().body(response);
     }
@@ -105,22 +105,22 @@ public class UserController implements UserApi {
         return ResponseEntity.ok().body("짝꿍 해제에 성공했습니다.");
     }
 
-    public ResponseEntity<UserInfoResponseDto> exchange(HttpServletRequest request,
-                                                        @RequestBody UserExchangeRequestDto userExchangeRequestDto) {
+    public ResponseEntity<UserResponse> exchange(HttpServletRequest request,
+                                                 @RequestBody UserExchangeRequestDto userExchangeRequestDto) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
         return ResponseEntity.ok().body(
-                UserInfoResponseDto.fromEntity(userService.exchange(Long.parseLong(userId), userExchangeRequestDto))
+                UserResponse.fromEntity(userService.exchange(Long.parseLong(userId), userExchangeRequestDto))
         );
     }
 
-    public ResponseEntity<UserInfoResponseDto> completeSelfTest(HttpServletRequest request) {
+    public ResponseEntity<UserResponse> completeSelfTest(HttpServletRequest request) {
         String accessToken = jwtProvider.getToken(request);
         String userId = jwtProvider.getUserId(accessToken);
 
         return ResponseEntity.ok().body(
-                UserInfoResponseDto.fromEntity(userService.completeSelfTest(Long.parseLong(userId)))
+                UserResponse.fromEntity(userService.completeSelfTest(Long.parseLong(userId)))
         );
     }
 }
