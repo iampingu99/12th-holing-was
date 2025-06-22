@@ -13,6 +13,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,6 +30,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_user_public_id", columnNames = {"public_id"}),
+                @UniqueConstraint(name = "uk_user_social_id_provider", columnNames = {"social_id", "provider"})
+        }
+)
 public class User extends BaseTimeEntity implements UserDetails {
 
     @OneToMany(mappedBy = "user")
@@ -70,7 +78,7 @@ public class User extends BaseTimeEntity implements UserDetails {
     private User mate;
 
     @Setter
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private long publicId;
 
     @OneToMany(mappedBy = "user")
