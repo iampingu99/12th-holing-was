@@ -22,11 +22,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(
-        indexes = {
-                @Index(name = "idx_user_report_user_created_desc", columnList = "user_id, created_at DESC")
-        }
-)
+@Table(indexes = {
+        @Index(
+                name = "idx_user_report_user_created_desc",
+                columnList = "user_id, created_at DESC"
+        )})
 public class UserReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
