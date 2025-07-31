@@ -109,21 +109,21 @@ class UserServiceTest {
                     .email("frodo@example.com")
                     .nickname("Frodo")
                     .profileImgUrl(null)
-                    .socialId("thisIsFrodoKakaoId")
+                    .socialId(1L)
                     .provider("KAKAO").build();
 
             neo = User.builder()
                     .email("neo@email.com")
                     .nickname("Neo")
                     .profileImgUrl(null)
-                    .socialId("thisIsNeoKakaoId")
+                    .socialId(2L)
                     .provider("KAKAO").build();
 
             con = User.builder()
                     .email("con@email.com")
                     .nickname("Con")
                     .profileImgUrl(null)
-                    .socialId("thisIsConKakaoId")
+                    .socialId(3L)
                     .provider("KAKAO").build();
 
             frodo.setPublicId(12345L);
