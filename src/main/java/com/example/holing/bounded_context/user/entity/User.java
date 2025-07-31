@@ -63,7 +63,7 @@ public class User extends BaseTimeEntity implements UserDetails {
     private int point;
 
     @Column(nullable = false)
-    private String socialId;
+    private Long socialId;
 
     @Column(nullable = false)
     private String provider;
@@ -86,7 +86,7 @@ public class User extends BaseTimeEntity implements UserDetails {
 
     @Builder
     public User(String email, String password, String nickname, String profileImgUrl, Gender gender, Boolean isPeriod,
-                String socialId, String provider) {
+                Long socialId, String provider) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
@@ -106,7 +106,7 @@ public class User extends BaseTimeEntity implements UserDetails {
                 .email(oAuthUser.email())
                 .nickname(oAuthUser.nickname())
                 .profileImgUrl(oAuthUser.profileImageUrl())
-                .socialId(oAuthUser.id())
+                .socialId(Long.parseLong(oAuthUser.id()))
                 .provider(oAuthUser.provider())
                 .build();
     }
@@ -116,7 +116,7 @@ public class User extends BaseTimeEntity implements UserDetails {
                 .email(dto.email())
                 .nickname(dto.nickname())
                 .profileImgUrl(dto.profileImageUrl())
-                .socialId(dto.id())
+                .socialId(Long.parseLong(dto.id()))
                 .provider(dto.provider())
                 .gender(request.gender())
                 .isPeriod(request.isPeriod())

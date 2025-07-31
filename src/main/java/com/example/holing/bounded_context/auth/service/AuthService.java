@@ -18,7 +18,7 @@ public class AuthService {
         return oAuthUser;
     }
 
-    public void unlink(String socialId) {
-        
+    public void unlink(Long socialId) {
+
     }
 }

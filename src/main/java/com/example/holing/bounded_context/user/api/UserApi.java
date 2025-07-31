@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -73,7 +72,7 @@ public interface UserApi {
 //    @GetMapping("/{userId}")
 //    ResponseEntity<UserInfoDto> read(@PathVariable Long userId);
 
-    @PatchMapping("/connect/{socialId}")
+    @PatchMapping("/connect/{publicId}")
     @Operation(summary = "짝꿍 연결", description = "사용자가 대상 사용자와 짝꿍으로 연결하기 위한 API 입니다")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "짝꿍 연결 성공"),
@@ -123,7 +122,7 @@ public interface UserApi {
                     }))
     })
     ResponseEntity<String> connectMate(HttpServletRequest request,
-                                       @Valid @NotNull @Pattern(regexp = "^\\d{10}$") @PathVariable String socialId);
+                                       @Valid @NotNull @PathVariable Long publicId);
 
     @PatchMapping("/disconnect")
     @Operation(summary = "짝꿍 해제", description = "사용자가 기존 짝궁과 연결을 해제하기 위한 API 입니다")

@@ -26,7 +26,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public User readBySocialId(String socialId) {
+    public User readBySocialId(Long socialId) {
         return userRepository.findBySocialId(socialId)
                 .orElseThrow(() -> new GlobalException(UserExceptionCode.TARGET_NOT_FOUND));
     }
@@ -45,18 +45,6 @@ public class UserService {
                         user.getNickname(),
                         user.getProfileImgUrl()))
                 .orElseGet(() -> userRepository.save(user));
-    }
-
-    @Transactional
-    public void connectMate(String userId, String socialId) {
-        User user = read(Long.parseLong(userId));
-        if (user.getMate() != null)
-            throw new GlobalException(UserExceptionCode.USER_MATE_EXISTS);
-
-        User mate = readBySocialId(socialId);
-        if (mate.getMate() != null)
-            throw new GlobalException(UserExceptionCode.TARGET_MATE_EXISTS);
-        user.connectMate(readBySocialId(socialId));
     }
 
     @Transactional
