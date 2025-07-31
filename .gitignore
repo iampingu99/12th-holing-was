@@ -38,6 +38,7 @@ out/
 
 ### application ###
 application.yml
+data.sql
 
 ### Mac OS ###
 .DS_Store
