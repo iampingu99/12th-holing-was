@@ -14,8 +14,9 @@
 홀링은 동반자의 갱년기 증상상태를 확인하고 갱년기에 대한 이해도를 높여, 함께 갱년기와 중년기의 삶을 함께 걷는 호르몬 힐링 서비스입니다.
 
 ## 🫶 서비스 사용법
-
-![image](https://github.com/user-attachments/assets/901d24de-d3f0-4d83-8d09-efc14c75800a)
+<p align="center">
+    <img width="666" height="1829" alt="2126" src="https://github.com/user-attachments/assets/080ed0e7-f9ca-4d9b-9efe-841c20001ba4" />
+</p>
 
 ## 🛠️ TECH
 
