@@ -1,5 +1,6 @@
-[![web](https://img.shields.io/badge/web-red?style=for-the-badge&logo=javascript)](https://github.com/Likelion-YeungNam-Univ/12th-holing-web)
-[![portfolio](https://img.shields.io/badge/portfolio-orange?style=for-the-badge&logo=libreoffice)](https://drive.google.com/file/d/1VhbheZZDoMZxmrxBcsKYe2zyJN3Cm5ch/view)
+[![Web](https://img.shields.io/badge/Repository/Web-blue?style=flat-square&logo=react&logoColor=white)](https://github.com/Likelion-YeungNam-Univ/12th-holing-web)
+[![Was](https://img.shields.io/badge/Repository/Was-green?style=flat-square&logo=springBoot&logoColor=white)](https://github.com/Likelion-YeungNam-Univ/12th-holing-was)
+[![portfolio](https://img.shields.io/badge/PDF/Portfolio-red?style=flat-square&logo=libreoffice)](https://drive.google.com/file/d/1VhbheZZDoMZxmrxBcsKYe2zyJN3Cm5ch/view)
 
 
 
