@@ -1,5 +1,10 @@
+[![web](https://img.shields.io/badge/web-red?style=for-the-badge&logo=javascript)](https://github.com/Likelion-YeungNam-Univ/12th-holing-web)
+[![portfolio](https://img.shields.io/badge/portfolio-orange?style=for-the-badge&logo=libreoffice)](https://drive.google.com/file/d/1VhbheZZDoMZxmrxBcsKYe2zyJN3Cm5ch/view)
+
+
+
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/311ae91f-9808-46bb-a59f-f68963b249bd" alt="Group 1171276454">
+    <img src="https://github.com/user-attachments/assets/311ae91f-9808-46bb-a59f-f68963b249bd" alt="Group 1171276454">
 </p>
 
 ## ✨ 개발 배경
@@ -30,7 +35,3 @@
 |:-------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------:|
 |                                             P&D                                             |                                             BE                                              |                                             BE                                              |
 |           Chaeyoung Park<br/>[@parkchaeyoung1](https://github.com/parkchaeyoung1)           |                   Jin Gyung Seok<br/>[@Jsplix](https://github.com/Jsplix)                   |                 Jinhak Kim<br/>[@iampingu99](https://github.com/iampingu99)                 |
-
-## 🔗 Etc
-
-https://github.com/Likelion-YeungNam-Univ/12th-holing-web
